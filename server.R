@@ -337,6 +337,9 @@ server <- function(input, output, session){
                 pcol = input$pcol, cex = input$cex,
                 outlier = input$outlier_opt, lwd = input$lwd,
                 lcol = input$lcol, ocol = input$ocol)
+        }
+        else{
+            plot.new()
         }},
         width = 800, height = 800, res = 150
     )
