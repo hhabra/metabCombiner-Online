@@ -302,7 +302,10 @@ ui <- fluidPage(
                         ),
                         tabPanel("combined table",
                             tableOutput("combinedTable_view")
-                        )
+                        ),
+                        tabPanel("feature data",
+                            tableOutput("featdata_view")
+                        ),
                     )
                 )
             )
