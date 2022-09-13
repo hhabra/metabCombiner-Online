@@ -33,8 +33,11 @@ server <- function(input, output, session){
         contentType = "text/csv"
     )
 
+
+
+
     output$input_x <- renderUI({
-        ext <- ifelse(length(input$file_x > 0), tools::file_ext(input$file_x$datapath), "")
+        ext <- ifelse(length(input$file_x) > 0, tools::file_ext(input$file_x$datapath), "")
         # if(ext %in% c("","rds") | is(state$xdata, "metabCombiner")){
         #
         # }
@@ -47,10 +50,10 @@ server <- function(input, output, session){
             tagList(fluidRow(
                 h4("Column Keywords", align = "center"),
                 splitLayout(
-                    textInput("mz_x", label = strong("m/z"), value = "mz", width = '75%'),
-                    textInput("rt_x", label = strong("retention time"), value = "rt", width = '75%'),
-                    textInput("id_x", label = "identifiers", value = "id", width = '75%'),
-                    textInput("adduct_x", label = "adducts", value = "adduct", width = '75%')
+                    textInput("mz_x", label = strong("m/z"), value = "[Mm][Zz]|[Mm]/[Zz]|[Mm].[Zz]|[Mm]ass", width = '75%'),
+                    textInput("rt_x", label = strong("retention time"), value = "[Rr][Tt]|[Rr]etention|[Tt]ime", width = '75%'),
+                    textInput("id_x", label = "identifiers", value = "[Ii][Dd]|[Nn]ame", width = '75%'),
+                    textInput("adduct_x", label = "adducts", value = "[Aa]dduct", width = '75%')
                 )
             ),
             fluidRow(
@@ -91,7 +94,7 @@ server <- function(input, output, session){
     })
 
     output$button_x <- renderUI({
-        ext <- ifelse(length(input$file_x > 0), tools::file_ext(input$file_x$datapath), "")
+        ext <- ifelse(length(input$file_x) > 0, tools::file_ext(input$file_x$datapath), "")
         if(ext == "")
             disabled(div(actionButton("data_x_inactive", label = strong("process X dataset"),
                              width = '200px', style = "text-align: center")))
@@ -111,10 +114,10 @@ server <- function(input, output, session){
                 fluidRow(
                     h4("Column Keywords", align = "center"),
                     splitLayout(
-                        textInput("mz_y", label = strong("m/z"), value = "mz", width = '75%'),
-                        textInput("rt_y", label = strong("retention time"), value = "rt", width = '75%'),
-                        textInput("id_y", label = "identifiers", value = "id", width = '75%'),
-                        textInput("adduct_y", label = "adducts", value = "adduct", width = '75%')
+                        textInput("mz_y", label = strong("m/z"), value = "[Mm][Zz]|[Mm]/[Zz]|[Mm].[Zz]|[Mm]ass", width = '75%'),
+                        textInput("rt_y", label = strong("retention time"), value = "[Rr][Tt]|[Rr]etention|[Tt]ime", width = '75%'),
+                        textInput("id_y", label = "identifiers", value = "[Ii][Dd]|[Nn]ame", width = '75%'),
+                        textInput("adduct_y", label = "adducts", value = "[Aa]dduct", width = '75%')
                     )
                 ),
                 fluidRow(
@@ -277,6 +280,9 @@ server <- function(input, output, session){
         state$plotAnchors <- FALSE
         state$plotFit <- FALSE
         state$finalobject <- NULL
+
+        state$xfile <- ""
+
     })
 
     output$object_summary <- renderPrint({
@@ -534,11 +540,22 @@ server <- function(input, output, session){
         }
     )
 
+    output$anchors_view <- renderTable(
+        if(!is.null(state$object)){
+            if(nrow(getAnchors(state$object) > 0))
+                getAnchors(state$object)
+      }
+    )
+
+
     output$newdata_warning <- renderPrint(
         if(input$enable_newdata)
             print(paste("warning: clicking one of the above buttons will overwrite",
                         "the current xdata or ydata object", sep = " "))
     )
+
+
+
 
 
     ###########################  batchCombine ##################################

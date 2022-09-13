@@ -284,13 +284,17 @@ ui <- fluidPage(
                         h3("Use Final Results as Input", align = "center"),
                         splitLayout(
                             actionButton("enable_newdata", "Enable", width = "80%"),
-                            disabled(actionButton("use_as_xdata", "Use Object as X Dataset",
+                            disabled(actionButton("use_as_xdata", "Use Results as X Dataset",
                                                   width = "80%")),
-                            disabled(actionButton("use_as_ydata", "Use Object as Y Dataset",
+                            disabled(actionButton("use_as_ydata", "Use Results as Y Dataset",
                                                   width = "80%"))
                         )
                     ),
-                    verbatimTextOutput("newdata_warning")
+                    verbatimTextOutput("newdata_warning"),
+                    textOutput("use_as_xdata_message")
+
+
+
                 ),
                 tabPanel("Data View",
                     tabsetPanel(
@@ -306,6 +310,10 @@ ui <- fluidPage(
                         tabPanel("feature data",
                             tableOutput("featdata_view")
                         ),
+                        tabPanel("anchors",
+                            tableOutput("anchors_view")
+                        ),
+
                     )
                 )
             )
@@ -333,13 +341,13 @@ ui <- fluidPage(
                                fluidRow(
                                    h4("Column Keywords", align = "center"),
                                    splitLayout(
-                                       textInput("mz_batch", label = strong("m/z"), value = "mz",
+                                       textInput("mz_batch", label = strong("m/z"), value = "[Mm][Zz]|[Mm]/[Zz]|[Mm].[Zz]|[Mm]ass",
                                                  width = '75%'),
-                                       textInput("rt_batch", label = strong("retention time"), value = "rt",
+                                       textInput("rt_batch", label = strong("retention time"), value = "[Rr][Tt]|[Rr]etention|[Tt]ime",
                                                  width = '75%'),
-                                       textInput("id_batch", label = "identifiers", value = "id",
+                                       textInput("id_batch", label = "identifiers", value = "[Ii][Dd]|[Nn]ame",
                                                  width = '75%'),
-                                       textInput("adduct_batch", label = "adducts", value = "adduct",
+                                       textInput("adduct_batch", label = "adducts", value = "[Aa]dduct",
                                                  width = '75%')
                                    )
                                ),
