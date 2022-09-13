@@ -11,8 +11,6 @@ First download R version version 4.0 or later and run the following commands to 
 #one-time installation
 install.packages(c("shiny", "shinyjs", "shinyFiles", "shinythemes", "devtools", "BiocManager"))
 BiocManager::install("BiocStyle")
-
-
 Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
 devtools::install_github("hhabra/metabCombiner", build_vignettes = TRUE)
 ```
