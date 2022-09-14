@@ -273,10 +273,10 @@ ui <- fluidPage(
                         ),
                         wellPanel(
                             h3("Save X & Y Objects", align = "center"),
-                            downloadButton("xdata_object", "xdata Table (.csv)",
+                            downloadButton("xdata_object", "xdata Table (.rds)",
                                            style = "width:100%;"),
                             br(), br(),
-                            downloadButton("ydata_object", "ydata Object (.csv)",
+                            downloadButton("ydata_object", "ydata Object (.rds)",
                                            style = "width:100%;")
                         )
                     ),

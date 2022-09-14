@@ -180,6 +180,14 @@ server <- function(input, output, session){
         else{
             rtbounds <- validateRTbounds(input$rtmin_x, input$rtmax_x)
 
+            id_x <- input$id_x
+            if(id_x == "") id_x <- NULL
+            else id_x <- gsub(",", "|", id_x)
+
+            adduct_x <- input$adduct_x
+            if(adduct_x == "") adduct_x <- NULL
+            else adduct_x <- gsub(",", "|", adduct_x)
+
             samples_x <- input$samples_x
             if(samples_x == "") samples_x <- NULL
             else samples_x <- gsub(",", "|", samples_x)
@@ -212,6 +220,14 @@ server <- function(input, output, session){
             state$ydata <- readRDS(input$file_y$datapath)
 
         else{
+            id_y <- input$id_y
+            if(id_y == "") id_y <- NULL
+            else id_y <- gsub(",", "|", id_y)
+
+            adduct_y <- input$adduct_y
+            if(adduct_y == "") adduct_y <- NULL
+            else adduct_y <- gsub(",", "|", adduct_y)
+
             samples_y <- input$samples_y
             if(samples_y == "") samples_y <- NULL
             else samples_y <- gsub(",", "|", samples_y)
@@ -276,7 +292,7 @@ server <- function(input, output, session){
     ##we will need to upgrade this when we use metabCombiner objects
     observeEvent(input$mzgroup, {
         state$object <- attCatch(metabCombiner(state$xdata, state$ydata, xid = input$xid,
-                                       yid = input$yid), state$object)
+                                       yid = input$yid, binGap = input$binGap), state$object)
         state$plotAnchors <- FALSE
         state$plotFit <- FALSE
         state$finalobject <- NULL
@@ -509,33 +525,33 @@ server <- function(input, output, session){
 
     output$xdata_view <- renderTable(
         if(is(state$xdata, "metabData"))
-            getData(state$xdata)[seq(1,min(10,nrow(getData(state$xdata)))),
+            getData(state$xdata)[seq(1,min(20,nrow(getData(state$xdata)))),
                                  seq(1,min(50,ncol(getData(state$xdata))))]
         else if(is(state$xdata, "metabCombiner"))
-            combinedTable(state$xdata)[seq(1,min(10,nrow(combinedTable(state$xdata)))),
+            combinedTable(state$xdata)[seq(1,min(20,nrow(combinedTable(state$xdata)))),
                                        seq(1,min(50,ncol(combinedTable(state$xdata))))]
 
     )
 
     output$ydata_view <- renderTable(
         if(is(state$ydata, "metabData"))
-            getData(state$ydata)[seq(1,min(10, nrow(getData(state$ydata)))),
+            getData(state$ydata)[seq(1,min(20, nrow(getData(state$ydata)))),
                                        seq(1,min(50,ncol(getData(state$ydata))))]
         else if(is(state$ydata, "metabCombiner"))
-            combinedTable(state$ydata)[seq(1,min(10,nrow(featdata(state$ydata)))),
+            combinedTable(state$ydata)[seq(1,min(20,nrow(featdata(state$ydata)))),
                                         seq(1,min(50,ncol(combinedTable(state$ydata))))]
     )
 
     output$combinedTable_view <- renderTable(
         if(!is.null(state$object)){
-            combinedTable(state$object)[seq(1,min(10,nrow(featdata(state$object)))),
+            combinedTable(state$object)[seq(1,min(20,nrow(featdata(state$object)))),
                                         seq(1,min(100,ncol(combinedTable(state$object))))]
         }
     )
 
     output$featdata_view <- renderTable(
         if(!is.null(state$object)){
-            featdata(state$object)[seq(1,min(10,nrow(featdata(state$object)))),
+            featdata(state$object)[seq(1,min(20,nrow(featdata(state$object)))),
                                     seq(1,min(100,ncol(featdata(state$object))))]
         }
     )
@@ -553,8 +569,6 @@ server <- function(input, output, session){
             print(paste("warning: clicking one of the above buttons will overwrite",
                         "the current xdata or ydata object", sep = " "))
     )
-
-
 
 
 
