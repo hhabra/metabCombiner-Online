@@ -12,7 +12,9 @@ server <- function(input, output, session){
                             xdata = NULL,
                             ydata = NULL,
                             batches = NULL,
-                            batchComb = NULL
+                            batchComb = NULL,
+                            xfile = "",
+                            yfile = ""
     )
 
     output$xdata_example <- downloadHandler(
@@ -33,15 +35,15 @@ server <- function(input, output, session){
         contentType = "text/csv"
     )
 
-
+    getExt_X <- reactive({
+        state$xfile <- ifelse(length(input$file_x) > 0, tools::file_ext(input$file_x$datapath), "")
+    })
 
 
     output$input_x <- renderUI({
-        ext <- ifelse(length(input$file_x) > 0, tools::file_ext(input$file_x$datapath), "")
-        # if(ext %in% c("","rds") | is(state$xdata, "metabCombiner")){
-        #
-        # }
-        if(ext %in% c("","rds")){
+        getExt_X()
+
+        if(state$xfile %in% c("","rds")){
 
 
         }
@@ -103,10 +105,15 @@ server <- function(input, output, session){
                              width = '200px', style = "text-align: center"))
     })
 
-    output$input_y <- renderUI({
-        ext <- ifelse(length(input$file_y > 0), tools::file_ext(input$file_y$datapath), "")
 
-        if(ext %in% c("","rds")){
+    getExt_Y <- reactive({
+        state$yfile <- ifelse(length(input$file_y) > 0, tools::file_ext(input$file_y$datapath), "")
+    })
+
+    output$input_y <- renderUI({
+        getExt_Y()
+
+        if(state$yfile %in% c("","rds")){
 
         }
         else{
@@ -296,9 +303,6 @@ server <- function(input, output, session){
         state$plotAnchors <- FALSE
         state$plotFit <- FALSE
         state$finalobject <- NULL
-
-        state$xfile <- ""
-
     })
 
     output$object_summary <- renderPrint({
@@ -516,11 +520,13 @@ server <- function(input, output, session){
     observeEvent(input$use_as_xdata, {
         req(!is.null(state$finalobject))
         state$xdata <- state$finalobject
+        state$xfile <- ""
     })
 
     observeEvent(input$use_as_ydata, {
         req(!is.null(state$finalobject))
         state$ydata <- state$finalobject
+        state$yfile <- ""
     })
 
     output$xdata_view <- renderTable(

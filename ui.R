@@ -9,7 +9,8 @@ ui <- fluidPage(
     shinyjs::useShinyjs(),
     div(
         titlePanel(
-            h1(strong(em("metabCombiner"), " Online"), align = "center")
+            title = h1(strong(em("metabCombiner"), " Online"), align = "center"),
+            windowTitle = "metabCombiner Online"
         )
     ),
     tabsetPanel(type = "tabs",
