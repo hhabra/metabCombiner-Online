@@ -72,8 +72,8 @@ server <- function(input, output, session){
             h4("Filters", align = "center"),
             fluidRow(
                 splitLayout(
-                    textInput("rtmin_x", "min RT", value = "min", width = "75%"),
-                    textInput("rtmax_x", "max RT", value = "max", width = "75%")
+                    textInput("rtmin_x", "Starting Retention Time", value = "min", width = "75%"),
+                    textInput("rtmax_x", "Ending Retention Time", value = "max", width = "75%")
                 )
             ),
             fluidRow(
@@ -89,7 +89,9 @@ server <- function(input, output, session){
                     numericInput("dupmz_x", "duplicate m/z tolerance",
                                  value = "0.0025", width = "75%"),
                     numericInput("duprt_x", "duplicate RT tolerance",
-                                 value = "0.05", width = "75%")
+                                 value = "0.05", width = "75%"),
+                    radioButtons("dup_opt_x", "duplicate feature options",
+                                 choices = c("Keep Single Row" = "single", "Merge Values" = "merge"))
                 )
             )
         )}
@@ -141,8 +143,8 @@ server <- function(input, output, session){
                 h4("Filters", align = "center"),
                 fluidRow(
                     splitLayout(
-                        textInput("rtmin_y", "min RT", value = "min", width = "75%"),
-                        textInput("rtmax_y", "max RT", value = "max", width = "75%")
+                        textInput("rtmin_y", "Starting Retention Time", value = "min", width = "75%"),
+                        textInput("rtmax_y", "Ending Retention Time", value = "max", width = "75%")
                     )
                 ),
                 fluidRow(
@@ -156,9 +158,11 @@ server <- function(input, output, session){
                 fluidRow(
                     splitLayout(
                         numericInput("dupmz_y", "duplicate m/z tolerance",
-                                     value = "0.0025", width = "75%"),
+                                    value = "0.0025", width = "60%"),
                         numericInput("duprt_y", "duplicate RT tolerance",
-                                     value = "0.05", width = "75%")
+                                    value = "0.05", width = "60%"),
+                        radioButtons("dup_opt_y", "duplicate feature options",
+                                    choices = c("Keep Single Row" = "single", "Merge Values" = "merge"))
                     )
                 )
             )
@@ -208,7 +212,8 @@ server <- function(input, output, session){
                                         samples = samples_x, extra = extra_x,
                                         zero = input$zero_x, rtmin = rtbounds[[1]],
                                         rtmax = rtbounds[[2]], misspc = input$misspc_x,
-                                        duplicate = c(input$dupmz_x, input$duprt_x)), state$xdata)
+                                        duplicate = opts.duplicate(input$dupmz_x, input$duprt_x, input$dup_opt_x)),
+                                        state$xdata)
         }
 
         if(!is.null(state$xdata) & !is.null(state$ydata))
@@ -250,7 +255,8 @@ server <- function(input, output, session){
                                         samples = samples_y,  extra = extra_y,
                                         zero = input$zero_y, rtmin = rtbounds[[1]],
                                         rtmax = rtbounds[[2]], misspc = input$misspc_y,
-                                        duplicate = c(input$dupmz_y, input$duprt_y)), state$ydata)
+                                        duplicate = opts.duplicate(input$dupmz_y, input$duprt_y, input$dup_opt_y)),
+                                        state$ydata)
         }
 
         if(!is.null(state$xdata) & !is.null(state$ydata))
@@ -599,7 +605,7 @@ server <- function(input, output, session){
                                   adduct = input$adduct_batch, samples = samples_batch,
                                   extra = extra_batch, rtmin = rtbounds[1], rtmax = rtbounds[2],
                                   misspc = input$misspc_batch,
-                                  duplicate = c(input$dupmz_batch, input$duprt_batch)),
+                                  duplicate = opts.duplicate(input$dupmz_batch, input$duprt_batch, input$dup_opt_batch)),
                                   state$batches)
         if(is.list(state$batches)){
             names(state$batches) = paste(input$batch_id, seq(1,length(state$batches)))

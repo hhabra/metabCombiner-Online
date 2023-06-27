@@ -367,8 +367,8 @@ ui <- fluidPage(
                                h4("Filters", align = "center"),
                                fluidRow(
                                    splitLayout(
-                                       textInput("rtmin_batch", "min RT", value = "min", width = "75%"),
-                                       textInput("rtmax_batch", "max RT", value = "max", width = "75%")
+                                       textInput("rtmin_batch", "Starting Retention Time", value = "min", width = "75%"),
+                                       textInput("rtmax_batch", "Ending Retention Time", value = "max", width = "75%")
                                    )
                                ),
                                fluidRow(
@@ -382,9 +382,12 @@ ui <- fluidPage(
                                fluidRow(
                                    splitLayout(
                                        numericInput("dupmz_batch", "duplicate m/z tolerance",
-                                                    value = "0.0025", width = "75%"),
+                                                    value = "0.0025", width = "60%"),
                                        numericInput("duprt_batch", "duplicate RT tolerance",
-                                                    value = "0.05", width = "75%")
+                                                    value = "0.05", width = "60%"),
+                                       radioButtons("dup_opt_batch", "duplicate feature options",
+                                                    choices = c("Keep Single Row" = "single", "Merge Values" = "merge"))
+
                                    )
                                ),
                                fluidRow(
