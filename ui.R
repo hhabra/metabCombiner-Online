@@ -309,7 +309,7 @@ ui <- fluidPage(
                             tableOutput("combinedTable_view")
                         ),
                         tabPanel("feature data",
-                            tableOutput("featdata_view")
+                            tableOutput("featData_view")
                         ),
                         tabPanel("anchors",
                             tableOutput("anchors_view")

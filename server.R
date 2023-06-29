@@ -550,21 +550,21 @@ server <- function(input, output, session){
             getData(state$ydata)[seq(1,min(20, nrow(getData(state$ydata)))),
                                        seq(1,min(50,ncol(getData(state$ydata))))]
         else if(is(state$ydata, "metabCombiner"))
-            combinedTable(state$ydata)[seq(1,min(20,nrow(featdata(state$ydata)))),
+            combinedTable(state$ydata)[seq(1,min(20,nrow(featData(state$ydata)))),
                                         seq(1,min(50,ncol(combinedTable(state$ydata))))]
     )
 
     output$combinedTable_view <- renderTable(
         if(!is.null(state$object)){
-            combinedTable(state$object)[seq(1,min(20,nrow(featdata(state$object)))),
+            combinedTable(state$object)[seq(1,min(20,nrow(featData(state$object)))),
                                         seq(1,min(100,ncol(combinedTable(state$object))))]
         }
     )
 
-    output$featdata_view <- renderTable(
+    output$featData_view <- renderTable(
         if(!is.null(state$object)){
-            featdata(state$object)[seq(1,min(20,nrow(featdata(state$object)))),
-                                    seq(1,min(100,ncol(featdata(state$object))))]
+            featData(state$object)[seq(1,min(20,nrow(featData(state$object)))),
+                                    seq(1,min(100,ncol(featData(state$object))))]
         }
     )
 
