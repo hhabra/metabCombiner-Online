@@ -447,7 +447,7 @@ server <- function(input, output, session){
             saveRDS(state$finalobject, file)
         }
     )
-
+  #guh
     output$combinedTable_full <- downloadHandler(
         filename = "results.csv",
         content = function(file){
@@ -579,7 +579,8 @@ server <- function(input, output, session){
     output$newdata_warning <- renderPrint(
         if(input$enable_newdata)
             print(paste("warning: clicking one of the above buttons will overwrite",
-                        "the current xdata or ydata object", sep = " "))
+                        "the current X dataset or Y dataset object", sep = " "))
+
     )
 
 
@@ -608,7 +609,7 @@ server <- function(input, output, session){
                                   duplicate = opts.duplicate(input$dupmz_batch, input$duprt_batch, input$dup_opt_batch)),
                                   state$batches)
         if(is.list(state$batches)){
-            names(state$batches) = paste(input$batch_id, seq(1,length(state$batches)))
+            names(state$batches) = paste0(input$batch_id, seq(1,length(state$batches)))
             enable("batchCombine_Run")
         }
     })
@@ -645,7 +646,8 @@ server <- function(input, output, session){
                                 prop = input$outlier_prop_batch,
                                 family = input$family_batch,
                                 rtx = c(input$rtx_min_batch,input$rtx_max_batch),
-                                rtx = c(input$rty_min_batch,input$rty_max_batch))
+                                rty = c(input$rty_min_batch,input$rty_max_batch),
+                                message = FALSE)
 
         scoreparam <- calcScoresParam(A = input$A_batch,
                                       B = input$B_batch,
@@ -667,8 +669,9 @@ server <- function(input, output, session){
 
     observeEvent(input$batchCombine_Run, {
         withCallingHandlers({
-            params = paramlists()
             shinyjs::html("batchCombine_progress", "")
+            params <- attCatch(paramlists(), list())
+            print(length(state$batches))
             state$batchComb <- attCatch(batchCombine(state$batches, params$binGap,
                                                      "gam", means = TRUE, params$saparam,
                                                      union = input$bcmode == "union",

@@ -107,7 +107,7 @@ ui <- fluidPage(
                                 fluidRow(
                                     splitLayout(
                                         radioButtons("family", "distribution family",
-                                                     choices = c("scat" = "scat", "gaussian" = "gaussian")),
+                                                     choices = c("scaled t" = "scat", "gaussian" = "gaussian")),
                                         radioButtons("outlier_method", "Outlier Detection Method",
                                                      choices = c("Mean Absolute Deviation" = "MAD",
                                                                  "boxplot" = "boxplot"),
@@ -220,14 +220,14 @@ ui <- fluidPage(
                                                      width = "75%")
                                     ),
                                     splitLayout(
-                                        numericInput("delta", "delta score", value = 0.1, max = 1, min = 0,
+                                        numericInput("delta", "delta score", value = 0.2, max = 1, min = 0,
                                                      width = "75%"),
                                         numericInput("maxRTerr", "max RT error (minutes)",
                                                      value = 10, min = 0.01, width = "75%")
                                     ),
                                     splitLayout(
-                                        checkboxInput("update_X", "Unite Missing X Features", width = "75%"),
-                                        checkboxInput("update_Y", "Unite Missing Y Features", width = "75%")
+                                        checkboxInput("update_X", "Unite Missing X Features", width = "75%", value = TRUE),
+                                        checkboxInput("update_Y", "Unite Missing Y Features", width = "75%", value = TRUE)
                                     ),
                                     actionButton("labelRows", "Annotate & Reduce", style = "text-align: center")
                                 )
@@ -241,44 +241,60 @@ ui <- fluidPage(
                 ),
                 tabPanel("Output",
                     splitLayout(
-                        wellPanel(
+                        column(width = 12,
                             h3("Save Final Results", align = "center"),
-                            downloadButton("combinedTable", "Combined Table (.csv)",
-                                           style = "width:100%;"),
-                            br(), br(),
-                            downloadButton("write2file", "Combined Table (special format)",
-                                           style = "width:100%;"),
-                            br(), br(),
-                            downloadButton("finalobject_results", "Download Object",
-                                           style = "width:100%;")
+                            wellPanel(
+                                downloadButton("combinedTable", "Combined Table (.csv)",
+                                               style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("write2file", "Combined Table (special format)",
+                                               style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("featData", "Feature Data (.csv)", style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("finalobject_results", "Download Object (.rds)",
+                                               style = "width:80%;")
+                            ),
+                            align = "center"
                         ),
-                        wellPanel(
+                        column(width = 12,
                             h3("Save Full Results", align = "center"),
-                            downloadButton("combinedTable_full", "Combined Table (.csv)",
-                                           style = "width:100%;"),
-                            br(), br(),
-                            downloadButton("write2file_full", "Combined Table (special format)",
-                                           style = "width:100%;"),
-                            br(), br(),
-                            downloadButton("object_results", "Download Object", style = "width:100%;")
+                            wellPanel(
+                                downloadButton("combinedTable_full", "Combined Table (.csv)",
+                                               style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("write2file_full", "Combined Table (special format)",
+                                               style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("featData_full", "Feature Data (.csv)", style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("object_results", "Download Object (.rds)", style = "width:80%;")
+                            ),
+                            align = "center"
                         )
                     ),
                     splitLayout(
-                        wellPanel(
+                        column(width = 12,
                             h3("Save X & Y Data Tables", align = "center"),
-                            downloadButton("xdata_download", "xdata Table (.csv)",
-                                           style = "width:100%;"),
-                            br(), br(),
-                            downloadButton("ydata_download", "ydata Table (.csv)",
-                                           style = "width:100%;")
+                            wellPanel(
+                                downloadButton("xdata_download", "xdata Table (.csv)",
+                                               style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("ydata_download", "ydata Table (.csv)",
+                                               style = "width:80%;")
+                            ),
+                            align = "center"
                         ),
-                        wellPanel(
+                        column(width = 12,
                             h3("Save X & Y Objects", align = "center"),
-                            downloadButton("xdata_object", "xdata Table (.rds)",
-                                           style = "width:100%;"),
-                            br(), br(),
-                            downloadButton("ydata_object", "ydata Object (.rds)",
-                                           style = "width:100%;")
+                            wellPanel(
+                                downloadButton("xdata_object", "xdata Object (.rds)",
+                                               style = "width:80%;"),
+                                br(), br(),
+                                downloadButton("ydata_object", "ydata Object (.rds)",
+                                               style = "width:80%;")
+                            ),
+                            align = "center"
                         )
                     ),
                     wellPanel(
@@ -293,9 +309,6 @@ ui <- fluidPage(
                     ),
                     verbatimTextOutput("newdata_warning"),
                     textOutput("use_as_xdata_message")
-
-
-
                 ),
                 tabPanel("Data View",
                     tabsetPanel(
@@ -313,8 +326,7 @@ ui <- fluidPage(
                         ),
                         tabPanel("anchors",
                             tableOutput("anchors_view")
-                        ),
-
+                        )
                     )
                 )
             )
@@ -336,7 +348,7 @@ ui <- fluidPage(
                                         textInput("batch_id", label = "batch ID prefix", value = "",
                                                  width = "50%"),
                                         selectInput("bcmode", label = "operation", width = "50%",
-                                                    choices = c("intersection", "union"))
+                                                    choices = c("union", "intersection"))
                                    )
                                 ),
                                fluidRow(
@@ -393,12 +405,12 @@ ui <- fluidPage(
                                fluidRow(
                                    h4("Stepwise Averaging", align = "center"),
                                    splitLayout(
-                                       selectInput("mz_ave", label = "m/z", choices = c("observed", "average"),
+                                       selectInput("mz_ave", label = "m/z", choices = c("average", "observed"),
                                                  width = '75%'),
                                        selectInput("rt_ave", label = "retention time", width = '75%',
-                                                choices = c("observed", "average")),
+                                                choices = c("average", "observed")),
                                        selectInput("Q_ave", label = "Q (relative abundance)", width = '75%',
-                                                   choices = c("observed", "average"))
+                                                   choices = c("average", "observed"))
                                    )
                                ),
                                div(actionButton("process_batch", label = strong("process batches"),
@@ -438,11 +450,10 @@ ui <- fluidPage(
                                 fluidRow(
                                     splitLayout(
                                         radioButtons("family_batch", "distribution family",
-                                            choices = c("scat" = "scat", "gaussian" = "gaussian")),
+                                            choices = c("scaled t" = "scat", "gaussian" = "gaussian")),
                                         radioButtons("outlier_method_batch", "Outlier Detection Method",
-                                            choices = c("MAD" = "Mean Absolute Deviation",
-                                                        "boxplot" = "boxplot"), selected = "MAD",
-                                            width = "100%")
+                                            choices = c("Mean Absolute Deviation" = "MAD",
+                                                        "boxplot" = "boxplot"), width = "100%")
                                     )
                                 ),
                                 fluidRow(
@@ -468,7 +479,7 @@ ui <- fluidPage(
                                         textInput("rty_max_batch", "Maximum (Y)",
                                                   value = "max", width = "90%")
                                     )
-                                ),
+                                )
                             ),
                             mainPanel(width = 0)
                         )
@@ -484,7 +495,7 @@ ui <- fluidPage(
                                                 min = 0, max = 150),
                                     sliderInput(inputId = "B_batch", label = "RT weight", value = 30,
                                                 min = 0, max = 50),
-                                    sliderInput(inputId = "C_batch", label = "Q weight", value = 0.25,
+                                    sliderInput(inputId = "C_batch", label = "Q weight", value = 0.5,
                                                 min = 0, max = 1)
                                 )
                              ),
@@ -501,7 +512,7 @@ ui <- fluidPage(
                                                     value = 2, min = 1, width = "75%")
                                      ),
                                     splitLayout(
-                                        numericInput("delta_batch", "delta score", value = 0.1,
+                                        numericInput("delta_batch", "delta score", value = 0.2,
                                                      max = 1, min = 0, width = "75%"),
                                         numericInput("maxRTerr_batch", "maximum RT error (minutes)",
                                                      value = 0.5, min = 0.01, width = "75%")
@@ -525,11 +536,8 @@ ui <- fluidPage(
                                  br(), br(),
                                  disabled(downloadButton("object_results_batch",
                                                 "Download metabCombiner Object", style = "width:80%;")),
-                                 br(), br(),
-                                 disabled(downloadButton("params_out_batch", "Download User Parameters",
-                                                style = "width:80%;"))
                             ),
-                            verbatimTextOutput("batchCombine_process")
+                            verbatimTextOutput("batchCombine_progress")
                         )
                     )
                 )
