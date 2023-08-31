@@ -671,7 +671,6 @@ server <- function(input, output, session){
         withCallingHandlers({
             shinyjs::html("batchCombine_progress", "")
             params <- attCatch(paramlists(), list())
-            print(length(state$batches))
             state$batchComb <- attCatch(batchCombine(state$batches, params$binGap,
                                                      "gam", means = TRUE, params$saparam,
                                                      union = input$bcmode == "union",
